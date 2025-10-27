@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 
 # ---------------------------
-# Dados
+# Datos
 # ---------------------------
 df_mercat = pd.DataFrame({
     'Mercat': ['Domèstic', 'Estranger', 'Total'],
@@ -34,7 +34,7 @@ st.title("🏙️ Evolució del turisme i Pisos turistics a Barcelona")
 # ---------------------------
 # PDF no topo
 # ---------------------------
-pdf_path = r".\pdf\informe.pdf"
+pdf_path = r"C:\Users\Alumne_mati1\curs-python\fonts\informe.pdf"
 with open(pdf_path, "rb") as f:
     pdf_bytes = f.read()
 
@@ -45,14 +45,14 @@ st.markdown(
 st.download_button(label="⬇️ Baixar PDF", data=pdf_bytes, file_name="informe.pdf", mime="application/pdf")
 
 # ---------------------------
-# Filtros laterais
+# Filtros laterales
 # ---------------------------
 st.sidebar.header("🎛️ Filtres")
 mercat_seleccionat = st.sidebar.radio("Selecciona el mercat", df_mercat['Mercat'].tolist())
 comarca_seleccionada = st.sidebar.selectbox("Selecciona la comarca", ["*"] + df_comarca['Comarca'].tolist())
 
 # ---------------------------
-# KPIs principais
+# KPIs principales
 # ---------------------------
 total_viatgers = df_mercat['Viatgers'].sum()
 total_pernoctacions = df_mercat['Pernoctacions'].sum()
@@ -81,27 +81,44 @@ with col1:
         'Categoria': ['Viatgers', 'Pernoctacions'],
         'Valor': [mercat_data['Viatgers'].values[0], mercat_data['Pernoctacions'].values[0]]
     })
-    fig_vp = px.bar(df_vp, y='Categoria', x='Valor', orientation='h',
-                    text='Valor', height=300, color='Categoria',
-                    color_discrete_map={'Viatgers':'#FF7F0E','Pernoctacions':'#2CA02C'})
-    fig_vp.update_traces(texttemplate='%{text:.0f}', textposition='outside')
-    fig_vp.update_layout(showlegend=False, margin=dict(l=20,r=20,t=20,b=20))
+
+    fig_vp = go.Figure()
+
+    fig_vp.add_trace(go.Bar(
+        y=df_vp['Categoria'],
+        x=df_vp['Valor'],
+        orientation='h',
+        text=df_vp['Valor'],
+        textposition='outside',
+        marker=dict(color=['#FF7F0E', '#2CA02C'])
+    ))
+
+    fig_vp.update_layout(
+        height=300,
+        showlegend=False,
+        margin=dict(l=20, r=20, t=20, b=20)
+    )
+
     st.plotly_chart(fig_vp, use_container_width=True)
 
 with col2:
     st.markdown("### Estada Mitjana (nits)")
-    fig_pie = px.pie(df_mercat, 
-                     names='Mercat', 
-                     values='Estada mitjana',
-                     color='Mercat',
-                     color_discrete_map={'Domèstic':'#FF7F0E','Estranger':'#2CA02C','Total':'#9467BD'},
-                     hole=0.3)
+    fig_pie = go.Figure(data=[go.Pie(
+        labels=df_mercat['Mercat'],
+        values=df_mercat['Estada mitjana'],
+        hole=0.3,
+        marker=dict(colors=['#FF7F0E', '#2CA02C', '#9467BD'])
+    )])
+
     fig_pie.update_traces(textinfo='label+value', textfont_size=16)
-    fig_pie.update_layout(height=300, margin=dict(l=20,r=20,t=20,b=20))
+    fig_pie.update_layout(
+        height=300,
+        margin=dict(l=20, r=20, t=20, b=20)
+    )
     st.plotly_chart(fig_pie, use_container_width=True)
 
 # ---------------------------
-# KPIs de Comarca
+# KPIs per Comarca
 # ---------------------------
 st.markdown("### KPIs per Comarca")
 if comarca_seleccionada == "*":
@@ -140,16 +157,26 @@ st.markdown(
 # Gráfico Viatgers por Comarca
 # ---------------------------
 st.markdown("### Número de Viatgers per Comarca")
-df_comarca_viatgers = df_comarca.copy()
-df_comarca_viatgers['Viatgers'] = df_comarca_viatgers['Ocupació (%)'] * 100000  # exemplo proporcional
-fig_viatgers_comarca = px.bar(df_comarca_viatgers, 
-                              y='Comarca', 
-                              x='Viatgers', 
-                              orientation='h',
-                              text='Viatgers',
-                              height=400,
-                              color='Viatgers',
-                              color_continuous_scale='Viridis')
-fig_viatgers_comarca.update_traces(texttemplate='%{text:.0f}', textposition='outside')
-fig_viatgers_comarca.update_layout(showlegend=False, margin=dict(l=20,r=20,t=20,b=20))
-st.plotly_chart(fig_viatgers_comarca, use_container_width=True)
+df_comarca_viatgers = df_comarca[['Comarca', 'Ocupació (%)']]
+
+fig_comarca = go.Figure()
+
+fig_comarca.add_trace(go.Bar(
+    x=df_comarca_viatgers['Comarca'],
+    y=df_comarca_viatgers['Ocupació (%)'],
+    text=df_comarca_viatgers['Ocupació (%)'],
+    textposition='outside',
+    marker=dict(color='lightblue')
+))
+
+fig_comarca.update_layout(
+    height=400,
+    showlegend=False,
+    margin=dict(l=20, r=20, t=20, b=20),
+    xaxis_title="Comarca",
+    yaxis_title="Ocupació (%)"
+)
+
+st.plotly_chart(fig_comarca, use_container_width=True)
+
+
