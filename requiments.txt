@@ -3,5 +3,3 @@ pandas
 plotly-express
 openpyxl
 numpy
-
-
