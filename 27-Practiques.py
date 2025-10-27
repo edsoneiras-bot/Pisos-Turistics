@@ -34,14 +34,15 @@ st.title("🏙️ Evolució del turisme i Pisos turistics a Barcelona")
 # ---------------------------
 # PDF no topo
 # ---------------------------
+pdf_path = "./pdf/informe.pdf"
 with open("./pdf/informe.pdf", "rb") as f:
     pdf_bytes = f.read()
 
 st.markdown(
-    f'<a href="file://{pdf_path}" target="_blank" style="font-size:22px; font-weight:bold;">📄 Obrir indicadors Turistics a l´entorn de Barcelona</a>',
+    f'<a href="https://media.diba.cat/diba/labturisme/2024/index.html" target="_blank" style="font-size:22px; font-weight:bold;">📄 Obrir indicadors Turistics a l´entorn de Barcelona</a>',
     unsafe_allow_html=True
 )
-#st.download_button(label="⬇️ Baixar PDF", data=pdf_bytes, file_name="informe.pdf", mime="application/pdf")
+st.download_button(label="⬇️ Baixar PDF", data=pdf_bytes, file_name="informe.pdf", mime="application/pdf")
 
 # ---------------------------
 # Filtros laterales
@@ -177,6 +178,7 @@ fig_comarca.update_layout(
 )
 
 st.plotly_chart(fig_comarca, use_container_width=True)
+
 
 
 
