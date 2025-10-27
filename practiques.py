@@ -39,7 +39,7 @@ with open(pdf_path, "rb") as f:
     pdf_bytes = f.read()
 
 st.markdown(
-    f'<a href="file://{pdf_path}" target="_blank" style="font-size:22px; font-weight:bold;">📄 Obrir indicadors Turistics a l´entorn de Barcelona</a>',
+    f'<a href="file://{pdf_path}" target="_blank" style="font-size:22px; font-weight:bold;">📄 Obrir els indicadors Turistics a l´entorn de Barcelona</a>',
     unsafe_allow_html=True
 )
 st.download_button(label="⬇️ Baixar PDF", data=pdf_bytes, file_name="informe.pdf", mime="application/pdf")
